@@ -1,4 +1,4 @@
-const CACHE_NAME = "yen-euros-v2";
+const CACHE_NAME = "yen-euros-v4";
 const APP_SHELL = [
   "/",
   "/manifest.webmanifest",

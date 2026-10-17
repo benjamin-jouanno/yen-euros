@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import PriceScanner from "./PriceScanner";
 
 type Currency = "JPY" | "EUR";
 
@@ -102,8 +103,15 @@ function Converter() {
   const [loadedBase, setLoadedBase] = useState<Currency | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const target: Currency = base === "JPY" ? "EUR" : "JPY";
   const isLoading = loadedBase !== base;
+  const yenToEuroRate =
+    quote?.base === base
+      ? base === "JPY"
+        ? quote.rate
+        : 1 / quote.rate
+      : null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -174,6 +182,8 @@ function Converter() {
     setIsRefreshing(false);
     setBase(target);
   }
+
+  const closeScanner = useCallback(() => setScannerOpen(false), []);
 
   return (
     <section className="converter-card" aria-labelledby="converter-title">
@@ -316,6 +326,30 @@ function Converter() {
         </span>
       </div>
 
+      <button
+        className="scan-price-button"
+        type="button"
+        onClick={() => setScannerOpen(true)}
+      >
+        <svg viewBox="0 0 20 20" fill="none" width="19" height="19">
+          <path
+            d="M3 6.5h3l1.3-2h5.4l1.3 2h3v9H3v-9Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+          <circle
+            cx="10"
+            cy="11"
+            r="2.8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+        </svg>
+        Scan a yen price
+        <span className="scan-button-arrow" aria-hidden="true">→</span>
+      </button>
+
       <div className="card-footer">
         <span>
           Rates are updated on ECB business days.
@@ -331,6 +365,7 @@ function Converter() {
           disabled={isRefreshing}
         >
           <svg
+            className={isRefreshing ? "refresh-icon refresh-icon--spinning" : "refresh-icon"}
             aria-hidden="true"
             viewBox="0 0 16 16"
             fill="none"
@@ -348,6 +383,18 @@ function Converter() {
           {isRefreshing ? "Refreshing" : "Refresh rate"}
         </button>
       </div>
+      {scannerOpen && (
+        <PriceScanner
+          yenToEuroRate={yenToEuroRate}
+          onClose={closeScanner}
+          onUsePrice={(scannedAmount) => {
+            setBase("JPY");
+            setAmount(String(scannedAmount));
+            setError(null);
+            closeScanner();
+          }}
+        />
+      )}
     </section>
   );
 }
@@ -389,7 +436,7 @@ function PwaControls() {
             ),
           ];
           if (assets.length === 0) return;
-          const cache = await caches.open("yen-euros-v2");
+          const cache = await caches.open("yen-euros-v4");
           await cache.addAll(assets);
         })
         .catch((error: unknown) => {

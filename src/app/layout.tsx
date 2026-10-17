@@ -8,13 +8,14 @@ export const metadata: Metadata = {
   applicationName: "Yenly",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Yenly",
   },
 };
 
 export const viewport: Viewport = {
   themeColor: "#f8f5ff",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
