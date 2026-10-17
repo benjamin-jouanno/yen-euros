@@ -9,6 +9,10 @@
   --pink-deep: #df4c82;
   --pink-light: #fff0f6;
   --paper: #f8f5ff;
+  --app-background:
+    radial-gradient(ellipse at 8% 21%, rgb(255 203 225 / 39%), transparent 34rem),
+    radial-gradient(ellipse at 93% 77%, rgb(205 193 255 / 43%), transparent 38rem),
+    linear-gradient(145deg, #fff9fd 0%, #f4f1ff 52%, #faf6ff 100%);
   --line: #e9e3f5;
   --white: #fff;
 }
@@ -25,15 +29,12 @@ body {
 }
 
 html {
-  background: #f8f5ff;
+  background: var(--app-background);
   overflow: hidden;
 }
 
 body {
-  background:
-    radial-gradient(ellipse at 8% 21%, rgb(255 203 225 / 39%), transparent 34rem),
-    radial-gradient(ellipse at 93% 77%, rgb(205 193 255 / 43%), transparent 38rem),
-    linear-gradient(145deg, #fff9fd 0%, #f4f1ff 52%, #faf6ff 100%);
+  background: var(--app-background);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
